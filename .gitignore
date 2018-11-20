@@ -16,3 +16,6 @@ vendor/*/
 
 # sqlite3
 *.db
+
+# dont commit config
+app.ini
