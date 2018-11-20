@@ -30,6 +30,7 @@ require (
 	github.com/swaggo/swag v0.0.0-20180313085104-003fc1e3c7d8
 	github.com/tealeg/xlsx v0.0.0-20180419195153-f36fa3be8893
 	github.com/ugorji/go v0.0.0-20180205165114-b5b949564861
+	github.com/urfave/cli v1.20.0
 	golang.org/x/net v0.0.0-20180724234803-3673e40ba225
 	golang.org/x/sys v0.0.0-20181119195503-ec83556a53fe
 	golang.org/x/text v0.3.0
