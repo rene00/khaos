@@ -15,15 +15,19 @@ func InitRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+
+	// Call requestlogger middleware to print request body.
+	//r.Use(requestlogger.RequestLogger())
+
 	gin.SetMode(setting.ServerSetting.RunMode)
 
-	r.GET("/ping", v1.Ping)
 	r.GET("/auth", api.GetAuth)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	apiV1 := r.Group("/api/v1")
 	apiV1.Use(jwt.JWT())
 	{
+		apiV1.POST("/ping", v1.Ping)
 		apiV1.GET("/attacks", v1.GetAttacks)
 	}
 	return r
