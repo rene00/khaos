@@ -40,10 +40,15 @@ func Setup() {
 	db.DB().SetMaxOpenConns(100)
 
 	db.AutoMigrate(&Auth{})
-	db.Create(&Auth{
+
+	testUser := &Auth{
 		Username: setting.DatabaseSetting.TestUsername,
 		Password: setting.DatabaseSetting.TestPassword,
-	})
+	}
+	if err := db.Where("username = ?", setting.DatabaseSetting.TestUsername).First(&testUser).Error; err != nil {
+		db.Create(testUser)
+	}
+
 	db.AutoMigrate(&Ping{})
 }
 
