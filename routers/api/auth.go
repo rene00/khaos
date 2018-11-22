@@ -40,7 +40,7 @@ func GetAuth(c *gin.Context) {
 	}
 
 	if !isExist {
-		appG.Response(http.StatusOK, e.ERROR_AUTH, nil)
+		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH, nil)
 		return
 	}
 
