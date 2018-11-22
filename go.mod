@@ -26,6 +26,7 @@ require (
 	github.com/mattn/go-sqlite3 v0.0.0-20181117164937-1ef601053922
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
 	github.com/modern-go/reflect2 v0.0.0-20180320133207-05fbef0ca5da
+	github.com/sirupsen/logrus v1.2.0
 	github.com/swaggo/gin-swagger v0.0.0-20180226041929-1510a6d46f01
 	github.com/swaggo/swag v0.0.0-20180313085104-003fc1e3c7d8
 	github.com/tealeg/xlsx v0.0.0-20180419195153-f36fa3be8893
