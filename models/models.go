@@ -44,6 +44,7 @@ func Setup() {
 		Username: setting.DatabaseSetting.TestUsername,
 		Password: setting.DatabaseSetting.TestPassword,
 	})
+	db.AutoMigrate(&Ping{})
 }
 
 func CloseDB() {
