@@ -1,15 +1,19 @@
 package e
 
 var MsgFlags = map[int]string{
-	SUCCESS:                        "ok",
-	ERROR:                          "fail",
-	UNAUTHORIZED:                   "unauthorized",
-	INVALID_PARAMS:                 "invalid params",
-	ERROR_AUTH_CHECK_TOKEN_FAIL:    "token fail",
-	ERROR_AUTH_CHECK_TOKEN_TIMEOUT: "token timeout",
-	ERROR_AUTH_TOKEN:               "token error",
-	ERROR_AUTH:                     "auth error",
-	ERROR_PING:                     "ping fail",
+
+	SUCCESS:      "OK",
+	ERROR:        "Fail",
+	UNAUTHORIZED: "Unauthorized",
+	BAD_REQUEST:  "Bad Request",
+
+	ERROR_AUTH:                     "Authentication Error",
+	ERROR_AUTH_CHECK_TOKEN_FAIL:    "Token Fail",
+	ERROR_AUTH_CHECK_TOKEN_TIMEOUT: "Token Timeout",
+	ERROR_AUTH_TOKEN:               "Token Error",
+	ERROR_AUTH_FAILED_TO_DECODE:    "Failed to Decode Authentication Header",
+	ERROR_AUTH_INVALID_HEADER:      "Invalid Authentication Header",
+	ERROR_PING:                     "Ping Error",
 }
 
 func GetMsg(code int) string {
