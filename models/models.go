@@ -8,6 +8,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
 	"github.com/rene00/khaos/pkg/setting"
+	"github.com/rene00/khaos/pkg/util"
 	"time"
 )
 
@@ -41,9 +42,10 @@ func Setup() {
 
 	db.AutoMigrate(&Auth{})
 
+	password, _ := util.HashPassword(setting.DatabaseSetting.TestPassword)
 	testUser := &Auth{
 		Username: setting.DatabaseSetting.TestUsername,
-		Password: setting.DatabaseSetting.TestPassword,
+		Password: password,
 	}
 	if err := db.Where("username = ?", setting.DatabaseSetting.TestUsername).First(&testUser).Error; err != nil {
 		db.Create(testUser)

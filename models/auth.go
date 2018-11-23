@@ -1,17 +1,26 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	"github.com/rene00/khaos/pkg/util"
+)
 
 type Auth struct {
 	Model
 	Username string `gorm:"unique;not null" json:"username"`
 	Password string `json:"password"`
+
+	Pings []Ping
 }
 
 func CheckAuth(username, password string) (bool, error) {
 	var auth Auth
-	err := db.Select("id").Where(Auth{Username: username, Password: password}).First(&auth).Error
+	err := db.Where(&Auth{Username: username}).First(&auth).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
+		return false, err
+	}
+
+	if true != util.CheckPasswordHash(password, auth.Password) {
 		return false, err
 	}
 
