@@ -7,7 +7,7 @@ import (
 	"github.com/rene00/khaos/pkg/setting"
 )
 
-var jwtSecret = []byte(setting.AppSetting.JwtSecret)
+var jwtSecret = []byte(setting.AppSetting.Secret)
 
 type Claims struct {
 	Username string `json:"username"`
@@ -20,7 +20,7 @@ func GenerateToken(username, password string) (string, error) {
 	expireTime := nowTime.Add(3 * time.Hour)
 
 	claims := Claims{
-		EncodeMD5(username),
+		EncryptString(username),
 		EncodeMD5(password),
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),

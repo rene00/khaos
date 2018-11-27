@@ -2,12 +2,17 @@ package models
 
 type Ping struct {
 	Model
-	Username string `json:"username"`
+	AuthID int
 }
 
 func AddPing(data map[string]interface{}) error {
+	var auth Auth
+	err := db.Where(&Auth{Username: data["username"].(string)}).First(&auth).Error
+	if err != nil {
+		return err
+	}
 	ping := Ping{
-		Username: data["username"].(string),
+		AuthID: auth.ID,
 	}
 	if err := db.Create(&ping).Error; err != nil {
 		return err

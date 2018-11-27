@@ -7,7 +7,7 @@ import (
 )
 
 type App struct {
-	JwtSecret string
+	Secret    string
 	PrefixUrl string
 
 	LogSavePath string
