@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	"github.com/rene00/khaos/pkg/setting"
+	"github.com/rene00/khaos/internal/khaos"
 	"github.com/rene00/khaos/pkg/util"
 	"time"
 )
@@ -21,16 +21,16 @@ type Model struct {
 	DeletedOn  int `json:"deleted_on"`
 }
 
-func Setup() {
+func Setup(conf *khaos.Config) {
 	var err error
-	db, err = gorm.Open(setting.DatabaseSetting.Type, setting.DatabaseSetting.FilePath)
+	db, err = gorm.Open(conf.DatabaseType, conf.DatabaseURI)
 
 	if err != nil {
 		log.Println(err)
 	}
 
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return setting.DatabaseSetting.TablePrefix + defaultTableName
+		return "khaos_" + defaultTableName
 	}
 
 	db.SingularTable(true)
@@ -42,13 +42,13 @@ func Setup() {
 
 	db.AutoMigrate(&Auth{})
 
-	password, _ := util.HashPassword(setting.DatabaseSetting.TestPassword)
-	testUser := &Auth{
-		Username: setting.DatabaseSetting.TestUsername,
+	password, _ := util.HashPassword(conf.AdminPassword)
+	adminUser := &Auth{
+		Username: conf.AdminUsername,
 		Password: password,
 	}
-	if err := db.Where("username = ?", setting.DatabaseSetting.TestUsername).First(&testUser).Error; err != nil {
-		db.Create(testUser)
+	if err := db.Where("username = ?", conf.AdminUsername).First(&adminUser).Error; err != nil {
+		db.Create(adminUser)
 	}
 
 	db.AutoMigrate(&Ping{})
