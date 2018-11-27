@@ -13,7 +13,7 @@ type Auth struct {
 	Pings []Ping
 }
 
-func CheckAuth(username, password string) (bool, error) {
+func Authenticate(username, password string) (bool, error) {
 	var auth Auth
 	err := db.Where(&Auth{Username: username}).First(&auth).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
