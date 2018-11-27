@@ -5,16 +5,13 @@ type Ping struct {
 	AuthID int
 }
 
-func AddPing(data map[string]interface{}) error {
+func AddPing(username string) error {
 	var auth Auth
-	err := db.Where(&Auth{Username: data["username"].(string)}).First(&auth).Error
+	err := db.Where(&Auth{Username: username}).First(&auth).Error
 	if err != nil {
 		return err
 	}
-	ping := Ping{
-		AuthID: auth.ID,
-	}
-	if err := db.Create(&ping).Error; err != nil {
+	if err := db.Create(&Ping{AuthID: auth.ID}).Error; err != nil {
 		return err
 	}
 	return nil
