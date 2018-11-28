@@ -52,6 +52,7 @@ func Setup(conf *khaos.Config) {
 	}
 
 	db.AutoMigrate(&Ping{})
+	db.AutoMigrate(&Inventory{})
 }
 
 func CloseDB() {

@@ -10,7 +10,8 @@ type Auth struct {
 	Username string `gorm:"unique;not null" json:"username"`
 	Password string `json:"password"`
 
-	Pings []Ping
+	Pings     []Ping
+	Inventory []Inventory
 }
 
 func Authenticate(username, password string) (bool, error) {

@@ -20,5 +20,6 @@ func registerRoutes(app *gin.Engine, conf *khaos.Config) {
 	v1.Use(setauthid.SetAuthID())
 	{
 		api.Ping(v1, conf)
+		api.Inventory(v1, conf)
 	}
 }
