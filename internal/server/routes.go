@@ -6,6 +6,7 @@ import (
 	"github.com/rene00/khaos/internal/api"
 	"github.com/rene00/khaos/internal/khaos"
 	"github.com/rene00/khaos/middleware/jwt"
+	"github.com/rene00/khaos/middleware/setauthid"
 )
 
 func registerRoutes(app *gin.Engine, conf *khaos.Config) {
@@ -16,6 +17,7 @@ func registerRoutes(app *gin.Engine, conf *khaos.Config) {
 	// JSON-REST API Version 1
 	v1 := app.Group("/api/v1")
 	v1.Use(jwt.JWT())
+	v1.Use(setauthid.SetAuthID())
 	{
 		api.Ping(v1, conf)
 	}
