@@ -11,8 +11,6 @@ import (
 func registerRoutes(app *gin.Engine, conf *khaos.Config) {
 
 	// Authentication endpoint
-	// app.GET("/auth", getAuth)
-	// app.GET("/auth", api.Auth)
 	api.Auth(app, conf)
 
 	// JSON-REST API Version 1
