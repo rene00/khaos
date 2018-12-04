@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/jinzhu/gorm"
 	"github.com/rene00/khaos/pkg/util"
 )
@@ -8,10 +10,7 @@ import (
 type Auth struct {
 	Model
 	Username string `gorm:"unique;not null" json:"username"`
-	Password string `json:"password"`
-
-	Pings     []Ping
-	Inventory []Inventory
+	Password string `gorm:"not null" json:"password"`
 }
 
 func Authenticate(username, password string) (bool, error) {
@@ -30,4 +29,13 @@ func Authenticate(username, password string) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func GetID(username string) (uint, error) {
+	var auth Auth
+	err := db.Where(&Auth{Username: username}).First(&auth).Error
+	if err != nil {
+		return 0, errors.New("Username does not exist")
+	}
+	return auth.ID, nil
 }
