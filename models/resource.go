@@ -1,5 +1,9 @@
 package models
 
+import (
+	"errors"
+)
+
 // Resource is the struct for a resource. An example of a resource is an AWS
 // EC2 instance.
 type Resource struct {
@@ -40,11 +44,11 @@ func GetResource(resourceID uint) (Resource, error) {
 	var resource Resource
 	err := db.Where("id = ?", resourceID).First(&resource).Error
 	if err != nil {
-		return resource, err
+		return resource, errors.New("resource not found")
 	}
 	err = db.Where("id = ?", resource.ResourceTypeID).First(&resource.ResourceType).Error
 	if err != nil {
-		return resource, err
+		return resource, errors.New("resource type not found")
 	}
 	return resource, nil
 }
@@ -63,7 +67,7 @@ func GetResourceType(name string) (ResourceType, error) {
 	var resourceType ResourceType
 	err := db.Where("name = ?", name).First(&resourceType).Error
 	if err != nil {
-		return resourceType, err
+		return resourceType, errors.New("resource type not found")
 	}
 	return resourceType, nil
 }
