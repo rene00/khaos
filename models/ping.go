@@ -1,17 +1,18 @@
 package models
 
+import (
+	"time"
+)
+
 type Ping struct {
 	Model
-	AuthID int
+	AuthID      uint
+	DateCreated time.Time
 }
 
-func AddPing(username string) error {
-	var auth Auth
-	err := db.Where(&Auth{Username: username}).First(&auth).Error
-	if err != nil {
-		return err
-	}
-	if err := db.Create(&Ping{AuthID: auth.ID}).Error; err != nil {
+func (p *Ping) Add() error {
+	p.DateCreated = time.Now()
+	if err := db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil
