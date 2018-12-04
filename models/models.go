@@ -1,44 +1,33 @@
 package models
 
 import (
-	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
 	"github.com/rene00/khaos/internal/khaos"
 	"github.com/rene00/khaos/pkg/util"
-	"time"
 )
 
 var db *gorm.DB
 
 type Model struct {
-	ID         int `gorm:"primary_key" json:"id"`
-	CreatedOn  int `json:"created_on"`
-	ModifiedOn int `json:"modified_on"`
-	DeletedOn  int `json:"deleted_on"`
+	ID uint `gorm:"primary_key" json:"id"`
 }
 
 func Setup(conf *khaos.Config) {
 	var err error
 	db, err = gorm.Open(conf.DatabaseType, conf.DatabaseURI)
-
 	if err != nil {
 		log.Println(err)
 	}
 
-	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return "khaos_" + defaultTableName
+	if conf.Debug {
+		log.Debug("Setting detailed database logging")
+		db.LogMode(true)
 	}
-
 	db.SingularTable(true)
-	db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
-	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
-	db.Callback().Delete().Replace("gorm:delete", deleteCallback)
-	db.DB().SetMaxIdleConns(10)
-	db.DB().SetMaxOpenConns(100)
 
 	db.AutoMigrate(&Auth{})
 
@@ -52,70 +41,41 @@ func Setup(conf *khaos.Config) {
 	}
 
 	db.AutoMigrate(&Ping{})
+
 	db.AutoMigrate(&Inventory{})
-}
 
-func CloseDB() {
-	defer db.Close()
-}
-
-// updateTimeStampForCreateCallback will set `CreatedOn`, `ModifiedOn` when creating
-func updateTimeStampForCreateCallback(scope *gorm.Scope) {
-	if !scope.HasError() {
-		nowTime := time.Now().Unix()
-		if createTimeField, ok := scope.FieldByName("CreatedOn"); ok {
-			if createTimeField.IsBlank {
-				createTimeField.Set(nowTime)
-			}
-		}
-
-		if modifyTimeField, ok := scope.FieldByName("ModifiedOn"); ok {
-			if modifyTimeField.IsBlank {
-				modifyTimeField.Set(nowTime)
-			}
-		}
+	db.AutoMigrate(&Resource{})
+	db.AutoMigrate(&ResourceType{})
+	for _, v := range []string{"AWSInstance", "K8SNode", "K8SPod"} {
+		db.Create(&ResourceType{Name: v})
 	}
-}
 
-// updateTimeStampForUpdateCallback will set `ModifiedOn` when updating
-func updateTimeStampForUpdateCallback(scope *gorm.Scope) {
-	if _, ok := scope.Get("gorm:update_column"); !ok {
-		scope.SetColumn("ModifiedOn", time.Now().Unix())
+	db.AutoMigrate(&AttackType{})
+	platformAttackType := &AttackType{Name: "Platform"}
+	db.Create(&platformAttackType)
+
+	db.AutoMigrate(&Attack{})
+	terminateInstanceAttack := &Attack{
+		Name:       "TerminateInstance",
+		AttackType: *platformAttackType,
 	}
-}
-
-func deleteCallback(scope *gorm.Scope) {
-	if !scope.HasError() {
-		var extraOption string
-		if str, ok := scope.Get("gorm:delete_option"); ok {
-			extraOption = fmt.Sprint(str)
-		}
-
-		deletedOnField, hasDeletedOnField := scope.FieldByName("DeletedOn")
-
-		if !scope.Search.Unscoped && hasDeletedOnField {
-			scope.Raw(fmt.Sprintf(
-				"UPDATE %v SET %v=%v%v%v",
-				scope.QuotedTableName(),
-				scope.Quote(deletedOnField.DBName),
-				scope.AddToVars(time.Now().Unix()),
-				addExtraSpaceIfExist(scope.CombinedConditionSql()),
-				addExtraSpaceIfExist(extraOption),
-			)).Exec()
-		} else {
-			scope.Raw(fmt.Sprintf(
-				"DELETE FROM %v%v%v",
-				scope.QuotedTableName(),
-				addExtraSpaceIfExist(scope.CombinedConditionSql()),
-				addExtraSpaceIfExist(extraOption),
-			)).Exec()
-		}
+	rebootInstanceAttack := &Attack{
+		Name:       "RebootInstance",
+		AttackType: *platformAttackType,
 	}
-}
+	db.Create(&terminateInstanceAttack)
+	db.Create(&rebootInstanceAttack)
 
-func addExtraSpaceIfExist(str string) string {
-	if str != "" {
-		return " " + str
+	db.AutoMigrate(&Campaign{})
+
+	db.AutoMigrate(&CampaignStatus{})
+	for _, v := range []string{"NotStarted", "Started", "Completed"} {
+		db.Create(&CampaignStatus{Name: v})
 	}
-	return ""
+
+	db.AutoMigrate(&CampaignResult{})
+	for _, v := range []string{"Failed", "Success"} {
+		db.Create(&CampaignResult{Name: v})
+	}
+
 }
