@@ -15,7 +15,7 @@ func Attack(router *gin.RouterGroup, conf *khaos.Config) {
 		attackID, _ := strconv.ParseUint(c.Param("attackID"), 10, 32)
 		attacks, err := models.GetAttack(uint(attackID))
 		if err != nil {
-			c.JSON(404, gin.H{"message": "No attack found"})
+			c.JSON(404, gin.H{"message": "attack not found"})
 			return
 		}
 
