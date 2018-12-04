@@ -21,5 +21,9 @@ func registerRoutes(app *gin.Engine, conf *khaos.Config) {
 	{
 		api.Ping(v1, conf)
 		api.Inventory(v1, conf)
+		api.Campaign(v1, conf)
+		api.Attack(v1, conf)
+		api.Resource(v1, conf)
+		api.ResourceType(v1, conf)
 	}
 }
