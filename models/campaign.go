@@ -19,7 +19,7 @@ type Campaign struct {
 	CampaignStatusID uint `sql:"type:integer REFERENCES campaign_status(id)" gorm:"not null"`
 	CampaignStatus   CampaignStatus
 
-	CampaignResultID uint `sql:"type:integer REFERENCES campaign_result(id)" gorm:"not null"`
+	CampaignResultID uint `sql:"type:integer REFERENCES campaign_result(id)"`
 	CampaignResult   CampaignResult
 
 	// BeginDate
